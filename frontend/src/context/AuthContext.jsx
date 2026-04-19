@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getProfile } from "../api/auth";
+import { getProfile, logoutUser } from "../api/auth";
 
 export const AuthContext = createContext();
 
@@ -7,21 +7,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  
   const fetchUser = async () => {
-    const token = localStorage.getItem("token");
-  
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
     try {
       const res = await getProfile();
       setUser(res.data.data.user);
     } catch (err) {
       setUser(null);
-      localStorage.removeItem("token");
     } finally {
       setLoading(false);
     }
@@ -31,13 +22,17 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  const login = async (token) => {
-    localStorage.setItem("token", token);
-    await fetchUser();
+  const login = async () => {
+    setLoading(true);
+    try {
+      await fetchUser();
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
+  const logout = async () => {
+    await logoutUser();
     setUser(null);
   };
 

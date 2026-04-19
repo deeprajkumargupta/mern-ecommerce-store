@@ -42,10 +42,11 @@ const Login = () => {
     });
 
     try {
-      const res = await loginUser(form);
+      await loginUser(form);
 
-      await login(res.data.data.token);
-      navigate("/profile");
+      // await login(res.data.data.token);
+      await login();
+      // navigate("/profile");
 
       toast.success("Login successful", {
         description: "Welcome back 👋",
