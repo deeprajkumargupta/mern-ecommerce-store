@@ -41,7 +41,7 @@ API.interceptors.response.use(
                 await API.post("/refresh-token");
                 return API(originalRequest); // retry original request
             } catch (err) {
-                window.location.href = "/login";
+                return Promise.reject(err);
             }
         }
         return Promise.reject(error);
