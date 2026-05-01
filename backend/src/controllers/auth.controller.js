@@ -202,7 +202,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     await User.findOneAndUpdate(
       { refreshToken: incomingRefreshToken },
       { $unset: { refreshToken: 1 } },
-      { new: true }
+      { returnDocument: "after" }
     );
   }
 
