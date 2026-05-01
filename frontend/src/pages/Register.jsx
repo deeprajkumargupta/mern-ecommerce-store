@@ -1,64 +1,46 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { loginUser } from "../api/auth";
+import React, { useState } from "react";
+import { registerUser } from "../api/auth.js";
+import { useNavigate, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
-const Login = () => {
+const Register = () => {
   const [loading, setLoading] = useState(false);
-
   const [form, setForm] = useState({
+    username: "",
     email: "",
     password: "",
   });
 
   const navigate = useNavigate();
-  const { user, login } = useAuth();
-
-  useEffect(() => {
-    if (user) {
-      navigate("/", { replace: true });
-    }
-  }, [user, navigate]);
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const toastId = toast.loading("Logging in...", {
-      description: "Please wait while we verify your credentials",
-      position: "top-right",
+    const toastId = toast.loading("Creating account...", {
+      description: "Please wait while we set things up",
     });
 
     try {
-      await loginUser(form);
-
-      // await login(res.data.data.token);
-      await login();
-      // navigate("/profile");
+      await registerUser(form);
 
       toast.success("Login successful", {
         description: "Welcome back 👋",
         id: toastId,
       });
 
-      navigate("/");
+      navigate("/login", { replace: true });
     } catch (error) {
-      toast.error("Login failed", {
-        description: error.response?.data?.message || "Invalid credentials",
+      toast.error("Registration failed", {
+        description: error.response?.data?.message || "Something went wrong",
         id: toastId,
       });
-      // setError(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -68,8 +50,16 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-muted/40">
       <div className="bg-background shadow-lg rounded-2xl p-8 w-full max-w-md space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <h2 className="text-2xl font-semibold text-center">Login</h2>
-
+          <h2 className="text-2xl font-semibold text-center">Register</h2>
+          <div>
+            <label className="text-sm font-medium">Username</label>
+            <Input
+              name="username"
+              type="username"
+              placeholder="Enter your UserName"
+              onChange={handleChange}
+            />
+          </div>
           <div>
             <label className="text-sm font-medium">Email</label>
             <Input
@@ -79,28 +69,28 @@ const Login = () => {
               onChange={handleChange}
             />
           </div>
-
-          <div className="space-y-2">
+          <div>
             <label className="text-sm font-medium">Password</label>
             <Input
               name="password"
               type="password"
-              placeholder="Password"
+              placeholder="password"
               onChange={handleChange}
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            {loading ? "Logging in..." : "Login"}
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Creating..." : "Register"}
           </Button>
         </form>
+
         <p>
-          Don’t have an account?{" "}
+          Already have an account?{" "}
           <Link
-            to="/register"
+            to="/login"
             className=" text-primary underline hover:font-bold transition-all duration-300"
           >
-            Register
+            Login
           </Link>
         </p>
       </div>
@@ -108,4 +98,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
