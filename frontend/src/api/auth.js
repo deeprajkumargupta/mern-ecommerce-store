@@ -33,7 +33,8 @@ API.interceptors.response.use(
       requestUrl.includes("/login") ||
       requestUrl.includes("/register") ||
       requestUrl.includes("/refresh-token") ||
-      requestUrl.includes("/logout");
+      requestUrl.includes("/logout") ||
+      requestUrl.includes("/profile");
 
     if (
       error.response?.status === 401 &&
@@ -51,7 +52,7 @@ API.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 export const getProfile = () => API.get("/profile");
