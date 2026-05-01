@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await getProfile();
       setUser(res.data.data.user);
-    } catch (err) {
+    } catch {
       setUser(null);
     } finally {
       setLoading(false);

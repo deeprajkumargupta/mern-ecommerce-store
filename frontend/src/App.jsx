@@ -51,7 +51,7 @@ function App() {
                 <Button>Login</Button>
               </Link>
             )}
-            
+
             <ModeToggle />
           </nav>
         </div>

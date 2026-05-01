@@ -28,7 +28,7 @@ function CartItemCard({ item }) {
             <Button
               size="icon"
               variant="outline"
-              onClick={(e) => {
+              onClick={() => {
                 dispatch(decreaseQuantity(item.id));
               }}
             >

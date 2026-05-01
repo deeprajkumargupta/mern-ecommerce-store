@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
 
 const ThemeProviderContext = createContext({
@@ -11,7 +12,7 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
 }) {
   const [theme, setTheme] = useState(
-    () => localStorage.getItem(storageKey) || defaultTheme
+    () => localStorage.getItem(storageKey) || defaultTheme,
   );
 
   useEffect(() => {

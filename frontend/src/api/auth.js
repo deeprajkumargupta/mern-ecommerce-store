@@ -1,9 +1,10 @@
-import axios from "axios"
+import axios from "axios";
 
 const API = axios.create({
-    baseURL: "http://localhost:5000/api/v1/auth",
-    withCredentials: true  //Browser, automatically attach cookies with request
-});   //creates a custom axios instance
+  baseURL:
+    import.meta.env.VITE_AUTH_API_URL || "http://localhost:5000/api/v1/auth",
+  withCredentials: true, //Browser, automatically attach cookies with request
+}); //creates a custom axios instance
 
 // APIs
 export const registerUser = (data) => API.post("/register", data);
@@ -22,37 +23,38 @@ export const logoutUser = () => API.post("/logout");
 
 // Response interceptor
 API.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
-        const requestUrl = originalRequest?.url || "";
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    const requestUrl = originalRequest?.url || "";
 
-        // Auto refresh logic
-        const shouldSkipRefresh =
-            requestUrl.includes("/login") ||
-            requestUrl.includes("/register") ||
-            requestUrl.includes("/refresh-token") ||
-            requestUrl.includes("/logout");
+    // Auto refresh logic
+    const shouldSkipRefresh =
+      requestUrl.includes("/login") ||
+      requestUrl.includes("/register") ||
+      requestUrl.includes("/refresh-token") ||
+      requestUrl.includes("/logout");
 
-        if (error.response?.status === 401 && !originalRequest?._retry && !shouldSkipRefresh) {
-            originalRequest._retry = true;
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !shouldSkipRefresh
+    ) {
+      originalRequest._retry = true;
 
-            try {
-                await API.post("/refresh-token");
-                return API(originalRequest); // retry original request
-            } catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return Promise.reject(error);
+      try {
+        await API.post("/refresh-token");
+        return API(originalRequest); // retry original request
+      } catch (err) {
+        return Promise.reject(err);
+      }
     }
+    return Promise.reject(error);
+  },
 );
 
 export const getProfile = () => API.get("/profile");
-
-
-
-
 
 // fetch("http://localhost:5000/api/v1/auth/login", {
 //   method: "POST",

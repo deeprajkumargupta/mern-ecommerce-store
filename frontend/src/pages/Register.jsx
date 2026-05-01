@@ -30,8 +30,8 @@ const Register = () => {
     try {
       await registerUser(form);
 
-      toast.success("Login successful", {
-        description: "Welcome back 👋",
+      toast.success("Registration successful", {
+        description: "You can now log in",
         id: toastId,
       });
 

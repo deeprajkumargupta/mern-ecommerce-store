@@ -58,7 +58,7 @@ function Cart() {
                 <span>Total</span>
                 <span>${total.toFixed(2)}</span>
               </div>
-              
+
               <Button className="w-full" size="lg">
                 Proceed to Checkout
               </Button>
