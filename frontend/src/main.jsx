@@ -16,6 +16,7 @@ import Login from "./pages/Login";
 import { Toaster } from "./components/ui/sonner";
 import { AuthProvider } from "./context/AuthContext";
 import Register from "./pages/Register";
+import { ThemeProvider } from "./components/theme-provider";
 
 const router = createBrowserRouter([
   {
@@ -66,8 +67,10 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster richColors position="top-right" />
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <RouterProvider router={router} />
+          <Toaster richColors position="top-right" />
+        </ThemeProvider>
       </AuthProvider>
     </Provider>
   </StrictMode>,

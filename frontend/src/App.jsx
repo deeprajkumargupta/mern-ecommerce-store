@@ -5,14 +5,14 @@ import { useContext } from "react";
 import { Button } from "./components/ui/button";
 import { useSelector } from "react-redux";
 import { useAuth } from "./context/AuthContext";
-
+import { ModeToggle } from "./components/mode-toggle";
 
 function App() {
   // const { cart } = useContext(CartContext);
   const cart = useSelector((state) => state.cart.cartItems);
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const {user, logout} = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -33,6 +33,7 @@ function App() {
                 )}
               </Button>
             </Link>
+
             {user ? (
               <>
                 <span className="text-sm">Hi, {user.username}</span>
@@ -50,6 +51,8 @@ function App() {
                 <Button>Login</Button>
               </Link>
             )}
+            
+            <ModeToggle />
           </nav>
         </div>
       </header>
