@@ -213,4 +213,43 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Logged out successfully"));
 });
 
-export { registerUser, loginUser, refreshAccessToken, logoutUser };
+const googleLogin = asyncHandler(async (req, res) => {
+  const { email, username, avatar } = req.body;
+
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    user = await User.create({
+      email,
+      username,
+      avatar,
+      provider: "google",
+    });
+  }
+
+  const { accessToken, refreshToken } =
+    await generateAccessAndRefreshTokens(user._id);
+
+  const accessOptions = getCookieOptions("access");
+  const refreshOptions = getCookieOptions("refresh");
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, accessOptions)
+    .cookie("refreshToken", refreshToken, refreshOptions)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: {
+            id: user._id,
+            email: user.email,
+            username: user.username,
+          },
+        },
+        "Google login successful"
+      )
+    );
+});
+
+export { registerUser, loginUser, refreshAccessToken, logoutUser, googleLogin };
