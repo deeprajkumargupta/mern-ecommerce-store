@@ -1,11 +1,12 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
+import Loader from "../components/Loader";
 
 const Profile = () => {
   const {user, loading}= useAuth();
 
   if(loading){
-    return <p className="text-center mt-10">Loading...</p>
+    return <Loader />;
   }
 
   if(!user){
