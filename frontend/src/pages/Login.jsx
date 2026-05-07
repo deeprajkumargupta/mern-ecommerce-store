@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { loginUser } from "../api/auth";
+import { googleLoginUser, loginUser } from "../api/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -9,7 +9,6 @@ import { useAuth } from "../context/AuthContext";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../lib/firebase";
 import { FcGoogle } from "react-icons/fc";
-import axios from "axios";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -34,21 +33,11 @@ const Login = () => {
 
       const googleUser = result.user;
 
-      const API_URL =
-        import.meta.env.VITE_AUTH_API_URL ||
-        "http://localhost:5000/api/v1/auth/google";
-
-      const res = await axios.post(
-        `${API_URL}`,
-        {
-          email: googleUser.email,
-          username: googleUser.displayName,
-          avatar: googleUser.photoURL,
-        },
-        {
-          withCredentials: true,
-        },
-      );
+      await googleLoginUser({
+        email: googleUser.email,
+        username: googleUser.displayName,
+        avatar: googleUser.photoURL,
+      });
 
       await login();
 

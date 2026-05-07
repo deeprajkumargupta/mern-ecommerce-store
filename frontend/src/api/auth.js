@@ -9,6 +9,7 @@ const API = axios.create({
 // APIs
 export const registerUser = (data) => API.post("/register", data);
 export const loginUser = (data) => API.post("/login", data);
+export const googleLoginUser = (data) => API.post("/google", data);
 export const logoutUser = () => API.post("/logout");
 
 // API.interceptors.request.use((config) => {
@@ -32,6 +33,7 @@ API.interceptors.response.use(
     const shouldSkipRefresh =
       requestUrl.includes("/login") ||
       requestUrl.includes("/register") ||
+      requestUrl.includes("/google") ||
       requestUrl.includes("/refresh-token") ||
       requestUrl.includes("/logout") ||
       requestUrl.includes("/profile");

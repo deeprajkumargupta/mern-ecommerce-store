@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { registerUser } from "../api/auth.js";
+import { googleLoginUser, registerUser } from "../api/auth.js";
 import { useNavigate, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../lib/firebase";
-import axios from "axios";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../context/AuthContext";
 
@@ -15,36 +14,28 @@ const Register = () => {
 
   const { login } = useAuth();
 
-const handleGoogleLogin = async () => {
-  try {
-    const result = await signInWithPopup(auth, googleProvider);
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
 
-    const googleUser = result.user;
+      const googleUser = result.user;
 
-    const API_URL =
-      import.meta.env.VITE_AUTH_API_URL ||
-      "http://localhost:5000/api/v1/auth/google";
-
-    await axios.post(
-      API_URL,
-      {
+      await googleLoginUser({
         email: googleUser.email,
         username: googleUser.displayName,
         avatar: googleUser.photoURL,
-      },
-      { withCredentials: true }
-    );
+      });
 
-    await login();
+      await login();
 
-    toast.success("Google signup successful");
+      toast.success("Google signup successful");
 
-    navigate("/");
-  } catch (error) {
-    console.log(error);
-    toast.error("Google signup failed");
-  }
-};
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error("Google signup failed");
+    }
+  };
 
   const [form, setForm] = useState({
     username: "",
