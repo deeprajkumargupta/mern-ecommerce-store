@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../features/cart/cartSlice";
-
+import Loader from "../components/Loader";
 function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -40,7 +40,9 @@ function ProductDetails() {
     fetchProduct();
   }, [id]);
 
-  if (!product) return <p>Loading...</p>;
+  if (!product) {
+    return <Loader />;
+  }
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
       <div className="grid md:grid-cols-2 gap-10">
