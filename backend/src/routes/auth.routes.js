@@ -1,6 +1,7 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import {
+  googleLogin,
   loginUser,
   logoutUser,
   refreshAccessToken,
@@ -24,6 +25,7 @@ const registerLimiter = rateLimit({
 
 router.route("/register").post(registerLimiter, registerUser);
 router.route("/login").post(loginLimiter, loginUser);
+router.route("/google").post(googleLogin);
 router.route("/refresh-token").post(refreshAccessToken);
 router.route("/logout").post(logoutUser);
 router.route("/profile").get(verifyJWT, (req, res) => {

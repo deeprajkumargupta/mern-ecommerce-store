@@ -6,6 +6,10 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../lib/firebase";
+import { FcGoogle } from "react-icons/fc";
+import axios from "axios";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -23,6 +27,40 @@ const Login = () => {
       navigate("/", { replace: true });
     }
   }, [user, navigate]);
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+
+      const googleUser = result.user;
+
+      const API_URL =
+        import.meta.env.VITE_AUTH_API_URL ||
+        "http://localhost:5000/api/v1/auth/google";
+
+      const res = await axios.post(
+        `${API_URL}`,
+        {
+          email: googleUser.email,
+          username: googleUser.displayName,
+          avatar: googleUser.photoURL,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      await login();
+
+      toast.success("Google login successful");
+
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Google login failed");
+    }
+  };
 
   const handleChange = (e) => {
     setForm({
@@ -92,6 +130,15 @@ const Login = () => {
 
           <Button type="submit" className="w-full">
             {loading ? "Logging in..." : "Login"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full flex items-center gap-2"
+            onClick={handleGoogleLogin}
+          >
+            <FcGoogle className="w-5 h-5" />
+            Continue with Google
           </Button>
         </form>
         <p>
