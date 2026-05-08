@@ -31,13 +31,9 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
 
-      const googleUser = result.user;
+      const token = await result.user.getIdToken();
 
-      await googleLoginUser({
-        email: googleUser.email,
-        username: googleUser.displayName,
-        avatar: googleUser.photoURL,
-      });
+      await googleLoginUser({ token });
 
       await login();
 
