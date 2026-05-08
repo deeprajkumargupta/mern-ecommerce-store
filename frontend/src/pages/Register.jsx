@@ -17,14 +17,9 @@ const Register = () => {
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
+      const token = await result.user.getIdToken();
 
-      const googleUser = result.user;
-
-      await googleLoginUser({
-        email: googleUser.email,
-        username: googleUser.displayName,
-        avatar: googleUser.photoURL,
-      });
+      await googleLoginUser({ token });
 
       await login();
 
@@ -85,8 +80,9 @@ const Register = () => {
             <label className="text-sm font-medium">Username</label>
             <Input
               name="username"
-              type="username"
+              type="text"
               placeholder="Enter your UserName"
+              value={form.username}
               onChange={handleChange}
             />
           </div>
@@ -96,6 +92,7 @@ const Register = () => {
               name="email"
               type="email"
               placeholder="Enter your Email"
+              value={form.email}
               onChange={handleChange}
             />
           </div>
@@ -105,6 +102,7 @@ const Register = () => {
               name="password"
               type="password"
               placeholder="password"
+              value={form.password}
               onChange={handleChange}
             />
           </div>

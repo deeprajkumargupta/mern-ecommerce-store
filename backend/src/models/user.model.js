@@ -22,6 +22,15 @@ const userSchema = new mongoose.Schema(
                 return this.provider !== "google";
             },
         },
+        firebaseUid: {
+            type: String,
+            unique: true,
+            sparse: true,  //because email/password users won’t have firebaseUid.
+        },
+        avatar: {
+            type: String,
+            default: ""
+        },
         provider: {
             type: String,
             enum: ["local", "google"],

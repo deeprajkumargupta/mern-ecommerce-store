@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
+import admin from "../lib/firebaseAdmin.js";
 /*
 Step 1: User logs in
     Sends email + password
@@ -214,17 +215,41 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const googleLogin = asyncHandler(async (req, res) => {
-  const { email, username, avatar } = req.body;
+  const { token } = req.body;
 
-  let user = await User.findOne({ email });
+  if (!token) {
+    throw new ApiError(400, "Firebase token missing");
+  }
 
+  // VERIFY TOKEN
+  const decodedToken = await admin.auth().verifyIdToken(token);
+
+  const email = decodedToken.email;
+  const username =
+    decodedToken.name || decodedToken.email?.split("@")[0] || "Google User";
+  const avatar = decodedToken.picture || "";
+  const firebaseUid = decodedToken.uid;
+
+  if (!email || !firebaseUid) {
+    throw new ApiError(400, "Invalid Firebase token");
+  }
+
+  let user = await User.findOne({ $or: [{ firebaseUid }, { email }] });
+
+  // CREATE USER IF NOT EXISTS
   if (!user) {
     user = await User.create({
+      firebaseUid,
       email,
       username,
       avatar,
       provider: "google",
     });
+  } else if (!user.firebaseUid) {
+    user.firebaseUid = firebaseUid;
+    user.avatar = avatar || user.avatar;
+    user.provider = "google";
+    await user.save({ validateBeforeSave: false });
   }
 
   const { accessToken, refreshToken } =
